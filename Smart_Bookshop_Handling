@@ -1,0 +1,220 @@
+#include<bits/stdc++.h>
+
+using namespace std;
+
+class book
+{
+private:
+    char *title,*pub,*author;
+    int price,av_stock;
+public:
+    static int s;
+    static int us;
+    book(char* s,char* p,char* a,int pr,int st)
+    {
+        int len;
+        len=strlen(s);
+        title=new char[len+1];
+        strcpy(title,s);
+
+
+        len=strlen(p);
+        pub=new char[len+1];
+        strcpy(pub,p);
+
+
+        len=strlen(a);
+        author=new char[len+1];
+        strcpy(author,a);
+
+        price=pr;
+        av_stock=st;
+    }
+
+    void update()
+    {
+        int choice,len,pr,stock;
+        char ti[70];
+        cout<<"\n\n---EDITING OPTIONS---\n\n1 TO EDIT BOOK TITLE\n2 TO EDIT PUBLICATION\n3 TO EDIT AUTHOR\n4 TO EDIT PRICE\n5 TO EDIT STOCK AVAILABILITY\n\nENTER YOUR CHOICE:";
+        cin>>choice;
+        switch(choice)
+        {
+            case 1:
+                fflush(stdin);
+                cout<<"\nENTER NEW BOOK TITLE:";
+                cin.getline(ti,70);
+                len=strlen(ti);
+                delete []title;
+                title=new char[len+1];
+                strcpy(title,ti);
+                break;
+
+            case 2:
+                fflush(stdin);
+                cout<<"\nENTER NEW PUBLICATION:";
+                cin.getline(ti,70);
+                len=strlen(ti);
+                delete []pub;
+                pub=new char[len+1];
+                strcpy(pub,ti);
+                break;
+
+            case 3:
+                fflush(stdin);
+                cout<<"\nENTER NEW AUTHOR:";
+                cin.getline(ti,70);
+                len=strlen(ti);
+                delete []author;
+                author=new char[len+1];
+                strcpy(author,ti);
+                break;
+
+            case 4:
+                fflush(stdin);
+                cout<<"ENTER NEW PRICE:";
+                cin>>pr;
+                price=pr;
+                break;
+
+            case 5:
+                cout<<"HOW MANY BOOKS? : ";
+                cin>>stock;
+                av_stock=stock;
+                break;
+        }
+
+    }
+
+    int book_search(char name[])
+    {
+        if(strcmp(name,title)==0)
+            return 1;
+        else
+            return 0;
+    }
+
+    int purchase()
+    {
+        int tot=0,nos;
+        cout<<"\nENTER THE NUMBER OF COPIES YOU WANT TO PURCHASE:";
+        cin>>nos;
+        if(nos > av_stock)
+            {
+                cout<<"--ONLY "<<av_stock<<" COPIES ARE PRESENT--";
+                book::us++;
+                return 0;
+            }
+        else
+            {
+                book::s++;
+                av_stock=av_stock-nos;
+                tot=price*nos;
+                cout<<"\nTOTAL PRICE FOR "<<nos<<" IS : "<<tot;
+                return 1;
+            }
+    }
+
+    void display()
+    {
+        cout<<"\n\nTITLE : "<<title<<"\nPUBLICATION : "<<pub<<"\nAUTHOR : "<<author<<"\nPRICE : "<<price<<"\nAVAILABLE STOCK : "<<av_stock;
+    }
+
+
+};
+
+int book::s;
+int book::us;
+
+int main()
+{   int n,i,ch,t,choice,flag,copies;
+    char name[70],publication[30],auth[40];
+    n=1;
+    book* b[n];
+
+    do
+    {
+    int price,stock;
+
+    cout<<"\nENTER BOOK NAME:";
+    cin.getline(name,70);
+
+    cout<<"\nWHAT IS THE PUBLICATION OF THE BOOK:";
+    cin.getline(publication,30);
+
+    cout<<"\nENTER AUTHOR'S NAME:";
+    cin.getline(auth,40);
+
+    cout<<"\nENTER PRICE OF BOOK:";
+    cin>>price;
+
+    cout<<"\nHOW MANY BOOKS ARE AVAILABLE:";
+    cin>>stock;
+
+    b[n]=new book(name,publication,auth,price,stock);
+    n++;
+    cout<<"\n------------------------------------------------------------";
+    cout<<"\nWANT TO ADD MORE RECORDS-PRESS [1] FOR YES AND [0] FOR NO:";
+    cin>>ch;
+    fflush(stdin);
+    }while(ch!=0);
+
+        do{
+        flag=0;
+        cout<<"\n\n---BOOKSHOP MAINTAIN!----\n\n";
+        cout<<"1.UPDATE BOOKS IN STORE\n2.SEARCH FOR A BOOK IN STORE\n3.PURCHASE\n4.DISPLAY\n5.SUCCESSFUL AND UNSUCCESSFUL TRANSACTIONS\nTO EXIT-PRESS [0]\n\nENTER YOUR CHOICE:";
+        cin>>choice;
+        switch(choice)
+        {
+            case 1: cout<<"ENTER NAME OF THE BOOK:";
+                    cin>>name;
+                    for(i=1;i<n;i++)
+                    {
+                        if(b[i]->book_search(name)==1)
+                            b[i]->update();
+                    }
+                    break;
+
+            case 2: cout<<"\nENTER NAME OF THE BOOK : ";
+                    cin>>name;
+
+                    for(i=1;i<n;i++)
+                    {
+                        if(b[i]->book_search(name)==1)
+                            {
+                                cout<<"BOOK AVAILABLE!!\n";
+                                flag=1;
+                            }
+                    }
+                    if(flag==0)
+                        cout<<"BOOK IS NOT AVAILABLE!\n";
+                    break;
+
+            case 3: cout<<"\nENTER THE BOOK NAME:";
+                    cin>>name;
+                    for(i=1;i<n;i++)
+                    {
+                        if(b[i]->book_search(name)==1)
+                            {
+                                b[i]->purchase();
+
+                                flag=1;
+                            }
+                    }
+                    if(flag==0)
+                        {
+                            cout<<"BOOK IS NOT AVAILABLE! CAN'T PROCEED FURTHER\n";
+                            book::us++;
+                        }
+                    break;
+
+            case 4: for(i=1;i<n;i++)
+                    {
+                        b[i]->display();
+                    }
+                    break;
+
+            case 5: cout<<"\n\nSUCCESSFUL TRANSACTIONS: "<<book::s;
+                    cout<<"\nUNSUCCESSFUL TRANSACTIONS: "<<book::us;
+        }
+        }while(choice!=0);
+}
